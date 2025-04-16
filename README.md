@@ -178,15 +178,15 @@ system designed to efficiently store and query log data using minimal indexing. 
 seamlessly with cloud-native environments, particularly Kubernetes, and offers a cost-effective
 solution for centralized logging.
 
-[**Promtail**](https://grafana.com/docs/loki/latest/send-data/promtail/) is an agent that collects log
-data from various sources (like container logs) and ships it to Loki. It enriches logs with metadata
-(especially from Kubernetes) to facilitate powerful querying and log correlation in Loki.
-
 Install Loki. **Note:** We are loading loki.yaml to use the filesystem as a data source. A typical setup will load from a cloud source. 
 ```bash
 helm repo update
 helm upgrade --install loki grafana/loki -f loki.yaml
 ```
+
+[**Promtail**](https://grafana.com/docs/loki/latest/send-data/promtail/) is an agent that collects log
+data from various sources (like container logs) and ships it to Loki. It enriches logs with metadata
+(especially from Kubernetes) to facilitate powerful querying and log correlation in Loki. Promtail automatically collects logs from all containers that write to stdout/stderr. No code changes or file-based logging is required for your services to appear in Loki.
 
 Install promtail.
 ```bash
@@ -348,7 +348,7 @@ This script:
 - Exports the `GRAFANA_ADMIN_PASSWORD` environment variable.
 - Sets up port forwarding from the Grafana pod to [http://localhost:3000](http://localhost:3000).
 - Sets up port forwarding from the loki pod to `http://loki-gateway.default.svc.cluster.local`. **Note:** This is
-and in-cluster port forward, so you need to use this gateway to connect from grafana.
+an in-cluster port forward, so you need to use this gateway to connect from grafana.
 
 To log in:
 - [**http://localhost:3000**](http://localhost:3000) - browse to this url in your browser
