@@ -338,15 +338,27 @@ This script:
 - Extracts the Grafana admin password from the Kubernetes secret.
 - Exports the `GRAFANA_ADMIN_PASSWORD` environment variable.
 - Sets up port forwarding from the Grafana pod to [http://localhost:3000](http://localhost:3000).
+- Sets up port forwarding from the loki pod to `http://loki-gateway.default.svc.cluster.local`. **Note:** This is
+and in-cluster port forward, so you need to use this gateway to connect from grafana.
 
 To log in:
+- [**http://localhost:3000**](http://localhost:3000) - browse to this url in your browser
 - **Username:** admin
-- **Password:** The value stored in `GRAFANA_ADMIN_PASSWORD`
+- **Password:** The value stored in `GRAFANA_ADMIN_PASSWORD` (and echoed to the terminal).
 
 **Persistence Warning:**
 The deployed Grafana instance has persistence disabled. Any changes will be lost if the Grafana pod is terminated.
 Consider enabling persistence via a Persistent Volume Claim (PVC) in the Helm chart's configuration for production
 use.
+
+### Add a loki data source.
+Once you've run start-grafana.sh and logged into the browser site, from Grafana -> Connections -> Data Sources, select **Add data source**. Select Loki and enter the following settings:
+- **URL:** http://loki-gateway.default.svc.cluster.local
+- **HTTP headers**: Expand HTTP Headers and select "Add header"
+    - **Header:** X-Scope-OrgID
+    - **Value:** foo
+
+Click "Save & Test" and you should see "Data source successfully connected." If not, check the above settings. 
 
 ---
 
