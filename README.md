@@ -149,7 +149,7 @@ clusters.
 
 Add the Prometheus Community repository, update, and install Prometheus.
 ```bash
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add --force-update prometheus-community https://prometheus-community.github.io/helm-charts
 ```
 ```bash
 helm repo update
@@ -164,7 +164,7 @@ display time-series data, making it ideal for tracking application performance a
 
 Add the Grafana repository, update, and install Grafana.
 ```bash
-helm repo add grafana https://grafana.github.io/helm-charts
+helm repo add --force-update grafana https://grafana.github.io/helm-charts
 ```
 ```bash
 helm repo update
@@ -198,7 +198,7 @@ performance and troubleshoot issues.
 Add the OpenTelemetry repository, update, and install the OpenTelemetry Collector with resource
 settings.
 ```bash
-helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo add --force-update open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 ```
 ```bash
 helm repo update
@@ -224,7 +224,7 @@ for demonstration.
 **Note:** This will install the chart, but the services will go into CrashLoopBackOff, as the license is not
 valid. You may want to skip this for now.
 ```bash
-helm repo add newrelic https://helm-charts.newrelic.com
+helm repo add --force-update newrelic https://helm-charts.newrelic.com
 ```
 ```bash
 helm repo update
@@ -252,7 +252,7 @@ same.
 The documentation recommends a trial license, so we may need that at some point, but it starts a trial clock, so
 don't get one yet. You may wish to skip this for now.
 ```bash
-helm repo add sumologic https://sumologic.github.io/sumologic-kubernetes-collection
+helm repo add --force-update sumologic https://sumologic.github.io/sumologic-kubernetes-collection
 ```
 ```bash
 helm repo update
@@ -269,7 +269,7 @@ supporting use cases such as IT operations, security, and business analytics.
 
 Add the Splunk repository, update, and install Splunk Connect for Kubernetes using dummy values.
 ```bash
-helm repo add splunk-otel-collector-chart https://signalfx.github.io/splunk-otel-collector-chart
+helm repo add --force-update splunk-otel-collector-chart https://signalfx.github.io/splunk-otel-collector-chart
 ```
 ```bash
 helm repo update
