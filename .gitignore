@@ -1,0 +1,7 @@
+.idea/
+.venv/
+venv/
+.vscode/
+poetry.lock
+.tool-versions
+__pycache__/

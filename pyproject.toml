@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "app"
+version = "0.1.0"
+description = "A model app for observability testing"
+authors = ["John Felps"]
+readme = "README.md"
+packages = [{ include = "main.py" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.115.12"
+uvicorn = "^0.34.1"
+yamllint = "^1.37.0"
+requests = "^2.32.3"
+kubernetes = "^32.0.1"
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+pylint = "^3.3.6"
+isort = "^6.0.1"
+poetry = "^2.1.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

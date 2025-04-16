@@ -1,0 +1,7 @@
+name: model
+image:
+  repository: docker.io/library/app
+  tag: latest
+  pullPolicy: Never
+replicaCount: 1
+resources: {}

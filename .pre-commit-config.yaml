@@ -1,0 +1,38 @@
+fail_fast: true
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: check-yaml
+        exclude: ^charts/
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        entry: poetry
+        args: [run, black]
+        language: system
+        types: [python]
+        require_serial: true
+      - id: isort
+        name: isort
+        entry: poetry
+        args: [run, isort]
+        language: system
+        types: [python]
+        require_serial: true
+      - id: pylint
+        name: pylint
+        entry: poetry
+        args: [run, pylint, app]
+        language: system
+        types: [python]
+        require_serial: true
+      - id: helm-template-yamllint
+        name: helm template yamllint
+        entry: bash -c 'helm template charts | yamllint -'
+        language: system
+        files: ^charts/
