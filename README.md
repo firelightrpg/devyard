@@ -323,13 +323,15 @@ we're just renaming the service with the installation.
 helm upgrade --install client ./charts/service \
   --set name=client \
   --set env[0].name=APP_NAME \
-  --set env[0].value=client
+  --set env[0].value=client \
+  --set image.reloadStamp=$(date +%s)
 ```
 ```bash
 helm upgrade --install delivery ./charts/service \
   --set name=delivery \
   --set env[0].name=APP_NAME \
-  --set env[0].value=delivery
+  --set env[0].value=delivery \
+  --set image.reloadStamp=$(date +%s)
 ```
 
 ---
