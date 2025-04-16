@@ -182,10 +182,10 @@ solution for centralized logging.
 data from various sources (like container logs) and ships it to Loki. It enriches logs with metadata
 (especially from Kubernetes) to facilitate powerful querying and log correlation in Loki.
 
-Install the Loki stack (which includes Promtail).
+Install the Loki stack (which includes Promtail). **Note:** We are loading loki.yaml to use the filesystem as a data source. A typical setup will load from a cloud source. 
 ```bash
 helm repo update
-helm upgrade --install loki grafana/loki-stack
+helm upgrade --install loki grafana/loki -f loki.yaml
 ```
 
 ### OTEL (OpenTelemetry Collector) – Distributed Tracing

@@ -26,4 +26,5 @@ echo $GRAFANA_ADMIN_PASSWORD
 
 # Start port forwarding from the Grafana pod to localhost:3000.
 echo "Port forwarding from Grafana pod $POD_NAME to localhost:3000..."
-kubectl --namespace default port-forward "$POD_NAME" 3000:3000
+kubectl --namespace default port-forward "$POD_NAME" 3000:3000 &
+kubectl port-forward svc/loki-gateway 3100:80 &
