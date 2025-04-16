@@ -182,10 +182,19 @@ solution for centralized logging.
 data from various sources (like container logs) and ships it to Loki. It enriches logs with metadata
 (especially from Kubernetes) to facilitate powerful querying and log correlation in Loki.
 
-Install the Loki stack (which includes Promtail). **Note:** We are loading loki.yaml to use the filesystem as a data source. A typical setup will load from a cloud source. 
+Install Loki. **Note:** We are loading loki.yaml to use the filesystem as a data source. A typical setup will load from a cloud source. 
 ```bash
 helm repo update
 helm upgrade --install loki grafana/loki -f loki.yaml
+```
+
+Install promtail.
+```bash
+helm upgrade --install promtail grafana/promtail \
+  --set loki.serviceName=loki-gateway \
+  --set loki.servicePort=80 \
+  --set config.clients[0].url=http://loki-gateway.default.svc.cluster.local/loki/api/v1/push \
+  --set config.clients[0].tenant_id=foo
 ```
 
 ### OTEL (OpenTelemetry Collector) – Distributed Tracing
@@ -360,6 +369,12 @@ Once you've run start-grafana.sh and logged into the browser site, from Grafana 
 
 Click "Save & Test" and you should see "Data source successfully connected." If not, check the above settings. 
 
+### Add a query
+Select Grafana -> Explore. Set the data source to Loki (the default). 
+For the query, update the Label filters:
+- **Label:** container
+- **Value:** client
+Select the Refresh symbol (top right) and you should see your logs. Select Live to see them as they come in. 
 ---
 
 ## Troubleshooting
