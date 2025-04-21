@@ -1,7 +1,11 @@
-name: model
+name: app
 image:
   repository: docker.io/library/app
   tag: latest
   pullPolicy: Never
 replicaCount: 1
 resources: {}
+rbac:
+  enabled: true
+serviceAccount:
+  name: default  # or use a dedicated SA if preferred

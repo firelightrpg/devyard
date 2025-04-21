@@ -5,6 +5,7 @@ Service app template with inter-service traffic simulation.
 import logging
 import os
 import random
+import sys
 import threading
 import time
 
@@ -18,12 +19,16 @@ from requests.exceptions import HTTPError
 app = FastAPI()
 app_name = os.environ["APP_NAME"]
 
-logging.basicConfig(
-    level=logging.INFO,
-    format=f"%(asctime)s [{app_name}] %(levelname)s: %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
 
+handler = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter(
+    "%(asctime)s [%(name)s] %(levelname)s: %(message)s", "%Y-%m-%d %H:%M:%S"
+)
+handler.setFormatter(formatter)
+
+root = logging.getLogger()
+root.setLevel(logging.INFO)
+root.handlers = [handler]  # Replace any existing handlers
 logger = logging.getLogger(app_name)
 
 
@@ -64,7 +69,7 @@ def get_dynamic_peers():
 
         return discovered
     except (ApiException, HTTPError):
-        logger.exception("Failed to discover peers via Kubernetes")
+        logger.error("Failed to discover peers via Kubernetes")
         return []
 
 
@@ -123,7 +128,7 @@ def simulate_inter_service_traffic():
             peer = random.choice(peers)
             try:
                 url_health = f"http://{peer}/health"
-                logger.info(f"Calling health check on peer: {peer}")
+                logger.info(f"Calling health check on peer: {peer} {url_health}")
                 response = requests.get(url_health, timeout=5)
                 logger.info(f"Peer {peer} health: {response.json()}")
 
@@ -133,7 +138,7 @@ def simulate_inter_service_traffic():
                     work_response = requests.get(url_do_work, timeout=5)
                     logger.info(f"Peer {peer} work response: {work_response.json()}")
             except requests.RequestException:
-                logger.exception("Hit error with request")
+                logger.error("Hit error with request")
 
         time.sleep(random.uniform(5, 15))
 

@@ -29,6 +29,8 @@ spec:
           env:
             - name: APP_NAME
               value: {{ .Values.name | quote }}
+            - name: RELOAD_STAMP
+              value: "{{ .Values.image.reloadStamp }}"
           readinessProbe:
             httpGet:
               path: /health
