@@ -3,13 +3,14 @@
 k8loglab is designed as a lightweight environment to experiment with and manage your logging stack.
 This guide describes setting up k8loglab on macOS using Homebrew and Rancher Desktop.
 
+See [**RANCHER**](./RANCHER.md) first.
+
 ---
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Step 1: Install Rancher Desktop and cluster tools](#step-1-install-rancher-desktop-and-cluster-tools)
-- [Step 2: Configure Your Logging Stack](#step-2-configure-your-logging-stack)
+- [Configure Your Logging Stack](#configure-your-logging-stack)
 - [Post-Installation: Accessing Grafana](#post-installation-accessing-grafana)
 - [Troubleshooting](#troubleshooting)
 
@@ -19,13 +20,13 @@ This guide describes setting up k8loglab on macOS using Homebrew and Rancher Des
 
 **k8loglab** provides a localized Kubernetes environment that helps you quickly deploy and test
 components of your logging stack. The stack includes:
-- **Prometheus** – for monitoring and alerting  
-- **Grafana** – for visualizing metrics  
-- **Loki** – for aggregating and querying logs  
-  - **Promtail** – for collecting logs (bundled with Loki)  
-- **OTEL (OpenTelemetry)** – for tracing and observability  
-- **New Relic** – for cloud-based performance monitoring and analytics  
-- **Sumo Logic** – for comprehensive log management and analysis  
+- **Prometheus** – for monitoring and alerting
+- **Grafana** – for visualizing metrics
+- **Loki** – for aggregating and querying logs
+  - **Promtail** – for collecting logs (bundled with Loki)
+- **OTEL (OpenTelemetry)** – for tracing and observability
+- **New Relic** – for cloud-based performance monitoring and analytics
+- **Sumo Logic** – for comprehensive log management and analysis
 - **Splunk** – for unified log aggregation and IT operations analytics
 
 By leveraging Rancher Desktop on macOS, you can emulate a Kubernetes cluster locally and
@@ -33,111 +34,7 @@ experiment with these components in a streamlined manner.
 
 ---
 
-## Step 1: Install Rancher Desktop and cluster tools
-
-### **Verify Homebrew:**
-
-```bash
-brew config | grep "Rosetta 2"
-```
-
-If the output shows `Rosetta 2: true` on an Apple Silicon machine, add the following to your shell
-resource file (e.g., `.zshrc` or `.profile`):
-
-```bash
-eval $(/opt/homebrew/bin/brew shellenv)
-```
-
-Then source your resource file or restart your shell and ensure
-`brew config | grep "Rosetta 2"` outputs `Rosetta 2: false`
-
-### **Install Rancher Desktop:**
-
-[**Rancher Desktop**](https://docs.rancherdesktop.io/) is a desktop application that simplifies running a
-local Kubernetes cluster on your computer. It provides an intuitive GUI and CLI to manage
-containerized applications and Kubernetes clusters easily on macOS, Windows, or Linux. Rancher
-Desktop leverages container runtimes (like containerd or moby) and abstracts much of the complexity
-of Kubernetes, making it a great tool for developers to build, test, and deploy applications locally
-without the need for an external cloud-based Kubernetes environment.
-```bash
-brew install --cask rancher
-```
-
-### **Launch Rancher Desktop:**
-
-Open Rancher Desktop from your Applications folder. Configure the following settings in Preferences:
-
-- **Application:**
-  - General: Enable Administrative Access.
-  - Behavior:
-    - Disable automatic start
-    - Enable “Quit when closing application window.”
-- **Virtual Machine:** Use the default settings with Emulation set to **QEMU**.
-- **Container Engine:** Use moby (recommended for Docker).
-  - **Note:** containerd will install the **nerdctl** CLI and moby will install **docker**
-- **Kubernetes:**
-  - Ensure it is **enabled**.
-  - Set the version to stable (latest).
-  - Verify the Kubernetes port is **6443**.
-
-**Note:** Changing settings may require applying the changes, which can restart the cluster and
-download images.
-
-### Install kubernetes-cli:
-
-The Kubernetes CLI ([**kubectl**](https://kubernetes.io/docs/reference/kubectl)) is a command-line tool for
-interacting with Kubernetes clusters. It allows you to deploy, manage, and troubleshoot
-applications running in Kubernetes by providing commands to create, update, delete, and inspect
-various cluster resources. Kubectl is essential for both day-to-day operations and automating cluster
-management tasks.
-```bash
-brew install kubernetes-cli
-```
-
-### Verify Your Kubernetes Cluster:
-```bash
-kubectl version
-```
-```bash
-kubectl get nodes
-```
-```bash
-kubectl get pods
-```
-**Note:** Initially, the default namespace will not have any resources.
-```bash
-kubectl get pods --all-namespaces
-```
-This should display the kube-system pods. The kube-system pods run the critical components and
-services that manage and maintain your Kubernetes cluster. They include control plane components,
-network proxies, DNS services, and other necessary add-ons that ensure the cluster functions
-correctly.
-
-**Note:** The status should be in Running or Completed. A running container will have a READY entry of
-1/1. A Completed container will have a READY entry of 0/1. If more than one container is part of the
-deployment, the entries will be 0/# and #/# respectively, where # is the number of containers.
-
-### Install Helm
-
-**[Helm](https://helm.sh/docs/)** is a package manager for Kubernetes that simplifies application deployment
-and management. It uses charts—collections of YAML templates—to define, install, upgrade, and manage
-Kubernetes resources in a consistent and repeatable way, much like apt or yum do for Linux packages.
-It is a vital component to [**Infrastructure As Code**](https://aws.amazon.com/what-is/iac/).
-```bash
-brew install helm
-```
-
-### Clone Repository
-
-Clone the **k8loglab** repository to get all the necessary charts and configuration files.
-```bash
-git clone git@github.com:Teladoc/k8loglab.git
-cd k8loglab
-```
-
----
-
-## Step 2: Configure Your Logging Stack
+## Configure Your Logging Stack
 
 ### Prometheus – Monitoring & Alerting
 
@@ -178,7 +75,7 @@ system designed to efficiently store and query log data using minimal indexing. 
 seamlessly with cloud-native environments, particularly Kubernetes, and offers a cost-effective
 solution for centralized logging.
 
-Install Loki. **Note:** We are loading loki.yaml to use the filesystem as a data source. A typical setup will load from a cloud source. 
+Install Loki. **Note:** We are loading loki.yaml to use the filesystem as a data source. A typical setup will load from a cloud source.
 ```bash
 helm repo update
 helm upgrade --install loki grafana/loki -f loki.yaml
@@ -323,15 +220,13 @@ we're just renaming the service with the installation.
 helm upgrade --install client ./charts/service \
   --set name=client \
   --set env[0].name=APP_NAME \
-  --set env[0].value=client \
-  --set image.reloadStamp=$(date +%s)
+  --set env[0].value=client
 ```
 ```bash
 helm upgrade --install delivery ./charts/service \
   --set name=delivery \
   --set env[0].name=APP_NAME \
-  --set env[0].value=delivery \
-  --set image.reloadStamp=$(date +%s)
+  --set env[0].value=delivery
 ```
 
 ---
@@ -369,14 +264,14 @@ Once you've run start-grafana.sh and logged into the browser site, from Grafana 
     - **Header:** X-Scope-OrgID
     - **Value:** foo
 
-Click "Save & Test" and you should see "Data source successfully connected." If not, check the above settings. 
+Click "Save & Test" and you should see "Data source successfully connected." If not, check the above settings.
 
 ### Add a query
-Select Grafana -> Explore. Set the data source to Loki (the default). 
+Select Grafana -> Explore. Set the data source to Loki (the default).
 For the query, update the Label filters:
 - **Label:** container
 - **Value:** client
-Select the Refresh symbol (top right) and you should see your logs. Select Live to see them as they come in. 
+Select the Refresh symbol (top right) and you should see your logs. Select Live to see them as they come in.
 ---
 
 ## Troubleshooting
@@ -407,7 +302,7 @@ If any pod STATUS is not in Completed or Running, you can view the pod logs with
 ```bash
 kubectl describe pod <pod-name>
 ```
-**Note:** The pod name will be something like `<replica set name>-<pod template hash>-<unique suffix>`,  
+**Note:** The pod name will be something like `<replica set name>-<pod template hash>-<unique suffix>`,
 **client-7c748796ff-n65ng** for example. There are other formats like StatefulSets and DaemonSets, that only
 have a unique suffix, and no pod template hash, **loki-0** and **loki-promtail-6zk8s** for example.
 
